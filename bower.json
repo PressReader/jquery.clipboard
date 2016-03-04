@@ -1,0 +1,24 @@
+{
+  "name": "jquery-clipboard",
+  "description": "jQuery Clipboard",
+  "main": "jquery.clipboard.js",
+  "authors": [
+    "Valerian Saliou",
+    "SteamDev"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "jquery-clipboard",
+    "jquery",
+    "clipboard"
+  ],
+  "homepage": "https://github.com/PressReader/jquery.clipboard",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
