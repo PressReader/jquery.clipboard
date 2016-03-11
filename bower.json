@@ -21,5 +21,6 @@
     "test",
     "tests",
     "Gruntfile.js"
-  ]
+  ],
+  "version": "0.0.4"
 }
