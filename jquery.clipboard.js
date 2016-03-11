@@ -14,98 +14,16 @@
  * Date: Fri Oct 3, 2014
  */
 
-/* Component: jQuery Clipboard */
-(function ($) {
-  var $clip = null;
-  var $is_loaded = false;
-
-  $.fn.clipboard = function (params) {
-    if ((typeof params == 'object' && !params.length) || (typeof params == 'undefined')) {
-      var settings = $.extend({
-        path: 'jquery.clipboard.swf',
-        copy: null,
-        beforeCopy: null,
-        afterCopy: null,
-        clickAfter: true
-      }, (params || {}));
-
-      return this.each(function () {
-        var o = $(this);
-
-        if (o.is(':visible') && (typeof settings.copy == 'string' || $.isFunction(settings.copy))) {
-          if ($.isFunction(settings.copy)) {
-            o.bind('Clipboard_copy',settings.copy);
-          }
-          if ($.isFunction(settings.beforeCopy)) {
-            o.bind('Clipboard_beforeCopy',settings.beforeCopy);
-          }
-          if ($.isFunction(settings.afterCopy)) {
-            o.bind('Clipboard_afterCopy',settings.afterCopy);
-          }
-
-          if($clip === null) {
-            ZeroClipboard.config({
-              moviePath: settings.path,
-              trustedDomains: '*',
-              hoverClass: 'hover',
-              activeClass: 'active'
-            });
-
-            $clip = new ZeroClipboard(null);
-
-            $clip.on('load', function(client) {
-              client.on('mouseover', function (client) {
-                $(this).trigger('mouseenter');
-              });
-
-              client.on('mouseout', function (client) {
-                $(this).trigger('mouseleave');
-              });
-
-              client.on('mousedown', function (client) {
-                $(this).trigger('mousedown');
-
-                if (!$.isFunction(settings.copy)) {
-                   client.setText(settings.copy);
-                } else {
-                   client.setText($(this).triggerHandler('Clipboard_copy'));
-                }
-
-                if ($.isFunction(settings.beforeCopy)) {
-                    $(this).trigger('Clipboard_beforeCopy');
-                }
-              });
-
-              client.on('complete', function (client, args) {
-                if ($.isFunction(settings.afterCopy)) {
-                  $(this).trigger('Clipboard_afterCopy');
-                } else {
-                  $(this).removeClass('hover');
-                }
-
-                if (settings.clickAfter) {
-                  $(this).trigger('click');
-                }
-              });
-            });
-          }
-
-          $clip.clip([o[0]]);
-        }
-      });
-    }
-  };
-})(jQuery);
 
 /* Component: ZeroClipboard */
 /*!
-* ZeroClipboard
-* The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible Adobe Flash movie and a JavaScript interface.
-* Copyright (c) 2014 Jon Rohan, James M. Greene
-* Licensed MIT
-* http://zeroclipboard.org/
-* v1.3.2
-*/
+ * ZeroClipboard
+ * The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible Adobe Flash movie and a JavaScript interface.
+ * Copyright (c) 2014 Jon Rohan, James M. Greene
+ * Licensed MIT
+ * http://zeroclipboard.org/
+ * v1.3.2
+ */
 (function() {
   "use strict";
   var currentElement;
@@ -1032,72 +950,72 @@
     var element = currentElement;
     var performCallbackAsync = true;
     switch (eventName) {
-     case "load":
-      if (cleanVersion) {
-        if (!_isFlashVersionSupported(cleanVersion)) {
-          _receiveEvent.call(this, "onWrongFlash", {
-            flashVersion: cleanVersion
-          });
-          return;
+      case "load":
+        if (cleanVersion) {
+          if (!_isFlashVersionSupported(cleanVersion)) {
+            _receiveEvent.call(this, "onWrongFlash", {
+              flashVersion: cleanVersion
+            });
+            return;
+          }
+          flashState.outdated = false;
+          flashState.ready = true;
+          flashState.version = cleanVersion;
         }
-        flashState.outdated = false;
-        flashState.ready = true;
-        flashState.version = cleanVersion;
-      }
-      break;
+        break;
 
-     case "wrongflash":
-      if (cleanVersion && !_isFlashVersionSupported(cleanVersion)) {
-        flashState.outdated = true;
-        flashState.ready = false;
-        flashState.version = cleanVersion;
-      }
-      break;
-
-     case "mouseover":
-      _addClass(element, _globalConfig.hoverClass);
-      break;
-
-     case "mouseout":
-      if (_globalConfig.autoActivate === true) {
-        ZeroClipboard.deactivate();
-      }
-      break;
-
-     case "mousedown":
-      _addClass(element, _globalConfig.activeClass);
-      break;
-
-     case "mouseup":
-      _removeClass(element, _globalConfig.activeClass);
-      break;
-
-     case "datarequested":
-      var targetId = element.getAttribute("data-clipboard-target"), targetEl = !targetId ? null : document.getElementById(targetId);
-      if (targetEl) {
-        var textContent = targetEl.value || targetEl.textContent || targetEl.innerText;
-        if (textContent) {
-          this.setText(textContent);
+      case "wrongflash":
+        if (cleanVersion && !_isFlashVersionSupported(cleanVersion)) {
+          flashState.outdated = true;
+          flashState.ready = false;
+          flashState.version = cleanVersion;
         }
-      } else {
-        var defaultText = element.getAttribute("data-clipboard-text");
-        if (defaultText) {
-          this.setText(defaultText);
-        }
-      }
-      performCallbackAsync = false;
-      break;
+        break;
 
-     case "complete":
-      _deleteOwnProperties(_clipData);
-      break;
+      case "mouseover":
+        _addClass(element, _globalConfig.hoverClass);
+        break;
+
+      case "mouseout":
+        if (_globalConfig.autoActivate === true) {
+          ZeroClipboard.deactivate();
+        }
+        break;
+
+      case "mousedown":
+        _addClass(element, _globalConfig.activeClass);
+        break;
+
+      case "mouseup":
+        _removeClass(element, _globalConfig.activeClass);
+        break;
+
+      case "datarequested":
+        var targetId = element.getAttribute("data-clipboard-target"), targetEl = !targetId ? null : document.getElementById(targetId);
+        if (targetEl) {
+          var textContent = targetEl.value || targetEl.textContent || targetEl.innerText;
+          if (textContent) {
+            this.setText(textContent);
+          }
+        } else {
+          var defaultText = element.getAttribute("data-clipboard-text");
+          if (defaultText) {
+            this.setText(defaultText);
+          }
+        }
+        performCallbackAsync = false;
+        break;
+
+      case "complete":
+        _deleteOwnProperties(_clipData);
+        break;
     }
     var context = element;
     var eventArgs = [ this, args ];
     return _dispatchClientCallbacks.call(this, eventName, context, eventArgs, performCallbackAsync);
   };
   if (typeof define === "function" && define.amd) {
-    define([ "require", "exports", "module" ], function(require, exports, module) {
+    define('ZeroClipboard', ["require", "exports", "module"], function(require, exports, module) {
       _amdModuleId = module && module.id || null;
       return ZeroClipboard;
     });
@@ -1108,3 +1026,96 @@
     window.ZeroClipboard = ZeroClipboard;
   }
 })();
+
+/* Component: jQuery Clipboard */
+;(function(factory) {
+
+  if (typeof define == 'function' && define.amd) {
+    // AMD, register as anonymous module
+    define(['jquery', 'ZeroClipboard'], factory)
+  } else {
+    // Browser globals
+    factory(window.jQuery, window.ZeroClipboard)
+  }
+
+})(function ($, ZeroClipboard) {
+  var $clip = null;
+  var $is_loaded = false;
+
+  $.fn.clipboard = function (params) {
+    if ((typeof params == 'object' && !params.length) || (typeof params == 'undefined')) {
+      var settings = $.extend({
+        path: 'jquery.clipboard.swf',
+        copy: null,
+        beforeCopy: null,
+        afterCopy: null,
+        clickAfter: true
+      }, (params || {}));
+
+      return this.each(function () {
+        var o = $(this);
+
+        if (o.is(':visible') && (typeof settings.copy == 'string' || $.isFunction(settings.copy))) {
+          if ($.isFunction(settings.copy)) {
+            o.bind('Clipboard_copy',settings.copy);
+          }
+          if ($.isFunction(settings.beforeCopy)) {
+            o.bind('Clipboard_beforeCopy',settings.beforeCopy);
+          }
+          if ($.isFunction(settings.afterCopy)) {
+            o.bind('Clipboard_afterCopy',settings.afterCopy);
+          }
+
+          if($clip === null) {
+            ZeroClipboard.config({
+              moviePath: settings.path,
+              trustedDomains: '*',
+              hoverClass: 'hover',
+              activeClass: 'active'
+            });
+
+            $clip = new ZeroClipboard(null);
+
+            $clip.on('load', function(client) {
+              client.on('mouseover', function (client) {
+                $(this).trigger('mouseenter');
+              });
+
+              client.on('mouseout', function (client) {
+                $(this).trigger('mouseleave');
+              });
+
+              client.on('mousedown', function (client) {
+                $(this).trigger('mousedown');
+
+                if (!$.isFunction(settings.copy)) {
+                   client.setText(settings.copy);
+                } else {
+                   client.setText($(this).triggerHandler('Clipboard_copy'));
+                }
+
+                if ($.isFunction(settings.beforeCopy)) {
+                    $(this).trigger('Clipboard_beforeCopy');
+                }
+              });
+
+              client.on('complete', function (client, args) {
+                if ($.isFunction(settings.afterCopy)) {
+                  $(this).trigger('Clipboard_afterCopy');
+                } else {
+                  $(this).removeClass('hover');
+                }
+
+                if (settings.clickAfter) {
+                  $(this).trigger('click');
+                }
+              });
+            });
+          }
+
+          $clip.clip([o[0]]);
+        }
+      });
+    }
+  };
+});
